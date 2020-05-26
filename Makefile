@@ -1,4 +1,4 @@
-CFLAGS=std=c11 -g -static
+CFLAGS=-std=c11 -g -static
 
 acc: acc.c
 
