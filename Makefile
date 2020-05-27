@@ -1,4 +1,4 @@
-CFLAGS=-std=c11 -g -static -fno-common
+CFLAGS=-std=c11 -g -static
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
@@ -11,6 +11,6 @@ test: acc
 	./test.sh
 
 clean:
-	rm -f acc *o *~ tmp*
+	rm -f acc *.o *~ tmp*
 
 .PHONY: test clean
