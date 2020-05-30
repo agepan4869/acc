@@ -1,4 +1,3 @@
-
 #include "acc.h"
 
 int main(int argc,char **argv){
@@ -6,9 +5,10 @@ int main(int argc,char **argv){
         error("%s: 引数の個数が正しくありません",argv[0]);
 
     // トークナイズしてパースする
+    // 結果はcodeに保存される
     user_input = argv[1];
-    token = tokenize(user_input);
-    Node *node = expr();
+    token = tokenize();
+    Node *node = program();
 
     codegen(node);
     return 0;

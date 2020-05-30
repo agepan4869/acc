@@ -19,6 +19,8 @@ static Node *new_num(long val){
     return node;
 }
 
+static Node *stmt();
+static Node *expr();
 static Node *equality();
 static Node *relational();
 static Node *add();
@@ -26,7 +28,25 @@ static Node *mul();
 static Node *unary();
 static Node *primary();
 
-Node *expr(){
+
+Node *program(){
+    Node head= {};
+    Node *cur = &head;
+
+    while(!at_eof()){
+        cur->next = stmt();
+        cur = cur->next;
+    }
+    return head.next;
+}
+
+static Node *stmt(){
+    Node *node = expr();
+    expect(";");
+    return node;
+}
+
+static Node *expr(){
     return equality();
 }
 

@@ -10,6 +10,7 @@ Token *token;
 // printfと同じ引数を取る
 void error(char *fmt, ...){
     va_list ap;
+    va_start(ap,fmt);
     vfprintf(stderr,fmt,ap);
     fprintf(stderr,"\n");
     exit(1);
@@ -37,6 +38,7 @@ bool consume(char *op){
     token = token->next;
     return true;
 }
+
 
 // 次のトークンが期待している記号のときには、トークンを一つ読み進める。
 // それ以外の場合にはエラーを報告する
@@ -77,8 +79,7 @@ static bool startswith(char *p,char *q){
 // 入力文字列pをトークないずしてそれを返す
 Token *tokenize(){
     char *p = user_input;
-    Token head;
-    head.next = NULL;
+    Token head = {};
     Token *cur = &head;
 
     while(*p){
@@ -94,7 +95,7 @@ Token *tokenize(){
             continue;
         }
 
-        if(strchr("+-*/()<>",*p)){
+        if(ispunct(*p)){
             cur = new_token(TK_RESERVED,cur,p++,1);
             continue;
         }
