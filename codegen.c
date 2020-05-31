@@ -1,5 +1,6 @@
 #include "acc.h"
 
+/*
 static void gen_lval(Node *node){
     if(node->kind != ND_LVAR)
         error("代入の左辺地が変数ではありません");
@@ -8,11 +9,19 @@ static void gen_lval(Node *node){
     printf("    sub     rax,%d\n",node->offset);
     printf("    push    rax\n");
 }
-
+*/
 void gen(Node *node){
-    if(node->kind == ND_NUM){
-        printf("    push    %ld\n",node->val);
-        return;
+    switch(node->kind){
+        case ND_NUM:
+            printf("    push    %ld\n",node->val);
+            return;
+        case ND_RETURN:
+            gen(node->lhs);
+            printf("    pop     rax\n");
+//            printf("    mov     rsp,rbp\n");
+//            printf("    pop     rbp\n");
+            printf("    ret\n");
+            return;
     }
 
     gen(node->lhs);
