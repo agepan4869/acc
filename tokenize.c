@@ -39,6 +39,14 @@ bool consume(char *op){
     return true;
 }
 
+Token *consume_ident(){
+    if(token->kind != TK_IDENT)
+        return NULL;
+    Token *t = token;
+    token = token->next;
+    return t;
+}
+
 
 // 次のトークンが期待している記号のときには、トークンを一つ読み進める。
 // それ以外の場合にはエラーを報告する
@@ -104,6 +112,11 @@ Token *tokenize(){
             continue;
         }
 
+        if('a' <= *p && *p <= 'z'){
+            cur = new_token(TK_IDENT,cur,p++,1);
+            continue;
+        }
+
         if(startswith(p,"==") || startswith(p,"!=") || startswith(p, "<=") || startswith(p,">=")){
             cur = new_token(TK_RESERVED,cur,p,2);
             p += 2;
@@ -120,12 +133,6 @@ Token *tokenize(){
             char *q = p;
             cur->val = strtol(p,&p,10);
             cur->len = p - q;
-            continue;
-        }
-
-        if(strncmp(p,"return",6) == 0 && !is_alnum(p[6])){
-            cur = new_token(TK_RESERVED,cur,p,6);
-            p += 6;
             continue;
         }
 

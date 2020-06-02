@@ -12,6 +12,7 @@
 // トークンの種類
 typedef enum{
     TK_RESERVED,        // 記号
+    TK_IDENT,           // 識別子
     TK_NUM,             // 整数トークン
     TK_EOF,             // 入力の終わりを表すトークン
 }TokenKind;
@@ -29,6 +30,7 @@ struct Token{
 void error(char *fmt, ...);
 void error_at(char *loc,char *fmt, ...);
 bool consume(char *op);
+Token *consume_ident();
 void expect(char *op);
 long expect_number();
 bool at_eof();
@@ -49,8 +51,10 @@ typedef enum{
     ND_NE,          // !=
     ND_LT,          // <,>
     ND_LE,          // <=,>=
+    ND_ASSIGN,      // =
     ND_NUM,         // 整数
     ND_RETURN,      // return
+    ND_VAR,         // 変数
     ND_EXPR_STMT    // 式のステートメント
 }NodeKind;
 
@@ -60,7 +64,8 @@ struct Node{
     Node *next;         // 次のノード
     Node *lhs;          // 左辺
     Node *rhs;          // 右辺
-    long val;            // kindがND_NUMの場合のみ使う
+    char name;          // kindがND_VARの場合のみ使う
+    long val;           // kindがND_NUMの場合のみ使う
 };
 
 Node *program();
