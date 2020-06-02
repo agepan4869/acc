@@ -8,8 +8,14 @@ int main(int argc,char **argv){
     // 結果はcodeに保存される
     user_input = argv[1];
     token = tokenize();
-    Node *node = program();
+    Function *prog = program();
 
-    codegen(node);
+    int offset = 0;
+    for(Var *var=prog->locals; var; var=var->next){
+        offset += 8;
+        var->offset = offset;
+    }
+    prog->stack_size = offset;
+    codegen(prog);
     return 0;
 }

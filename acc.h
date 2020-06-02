@@ -1,10 +1,11 @@
+#define _GNU_SOURCE
+
 #include <ctype.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 /**************
  *   tokenize.c
@@ -42,6 +43,13 @@ extern Token *token;
 /*************** 
  *   parse.c
  ***************/
+typedef struct Var Var;
+struct Var{
+    Var *next;
+    char *name;
+    int offset;
+};
+
 typedef enum{
     ND_ADD,         // +
     ND_SUB,         // -
@@ -64,13 +72,20 @@ struct Node{
     Node *next;         // 次のノード
     Node *lhs;          // 左辺
     Node *rhs;          // 右辺
-    char name;          // kindがND_VARの場合のみ使う
+    Var *var;          // kindがND_VARの場合のみ使う
     long val;           // kindがND_NUMの場合のみ使う
 };
 
-Node *program();
+typedef struct Function Function;
+struct Function{
+    Node *node;
+    Var *locals;
+    int stack_size;
+};
+
+Function *program();
 
 /*****************
 *   codegen.c
 ******************/
-void codegen(Node *node);
+void codegen(Function *prog);
