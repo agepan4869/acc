@@ -33,13 +33,6 @@ void gen(Node *node){
             gen(node->lhs);
             printf("    add     rsp,8\n");
             return;
-        case ND_RETURN:
-            gen(node->lhs);
-            printf("    pop     rax\n");
-//            printf("    mov     rsp,rbp\n");
-//            printf("    pop     rbp\n");
-            printf("    jmp     .L.return\n");
-            return;
         case ND_VAR:
             gen_addr(node);
             load();
@@ -101,6 +94,15 @@ void gen(Node *node){
             printf(".L.end.%d:\n",seq);
             return;
         }
+        case ND_BLOCK:
+            for(Node *n=node->body; n; n=n->next)
+                gen(n);
+            return;
+        case ND_RETURN:
+            gen(node->lhs);
+            printf("    pop     rax\n");
+            printf("    jmp     .L.return\n");
+            return;
     }
 
     gen(node->lhs);
