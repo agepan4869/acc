@@ -63,6 +63,7 @@ typedef enum{
     ND_NUM,         // 整数
     ND_RETURN,      // return
     ND_IF,          // if
+    ND_WHILE,       // while
     ND_VAR,         // 変数
     ND_EXPR_STMT    // 式のステートメント
 }NodeKind;
