@@ -228,6 +228,15 @@ static Node *primary(){
 
     Token *tok = consume_ident();
     if(tok){
+        // Function call
+        if(consume("(")){
+            expect(")");
+            Node *node = new_node(ND_FUNCALL);
+            node->funcname = strndup(tok->str,tok->len);
+            return node;
+        }
+
+        // Variable
         Var *var = find_var(tok);
         if(!var)
             var = new_lvar(strndup(tok->str,tok->len));
