@@ -17,9 +17,7 @@ void error(char *fmt, ...){
 }
 
 // エラー箇所を報告する
-void error_at(char *loc,char *fmt, ...){
-    va_list ap;
-    va_start(ap,fmt);
+static void verror_at(char *loc,char *fmt, va_list ap){
 
     int pos = loc - user_input;
     fprintf(stderr,"%s\n",user_input);
@@ -30,13 +28,26 @@ void error_at(char *loc,char *fmt, ...){
     exit(1);
 }
 
+void error_at(char *loc,char *fmt, ...){
+    va_list ap;
+    va_start(ap,fmt);
+    verror_at(loc, fmt, ap);
+}
+
+void error_tok(Token *tok, char *fmt, ...){
+    va_list ap;
+    va_start(ap,fmt);
+    verror_at(tok->str, fmt, ap);
+}
+
 // 次のトークンが期待している記号のときには、トークンを1つを読み進めて
 // 真を返す。それ以外の場合には偽を返す。
-bool consume(char *op){
+Token *consume(char *op){
     if(token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(token->str,op,token->len))
-        return false;
+        return NULL;
+    Token *t = token;
     token = token->next;
-    return true;
+    return t;
 }
 
 Token *consume_ident(){
@@ -52,7 +63,7 @@ Token *consume_ident(){
 // それ以外の場合にはエラーを報告する
 void expect(char *op){
     if(token->kind != TK_RESERVED || strlen(op) != token->len || memcmp(token->str,op,token->len))
-        error_at(token->str,"'%s'ではありません",op);
+        error_tok(token,"'%s'ではありません",op);
     token = token->next;
 }
 
@@ -60,7 +71,7 @@ void expect(char *op){
 // それ以外の場合にはエラーを報告する。
 long expect_number(){
     if(token->kind != TK_NUM)
-        error_at(token->str,"数ではありません");
+        error_tok(token,"数ではありません");
     long val = token->val;
     token = token->next;
     return val;
@@ -68,7 +79,7 @@ long expect_number(){
 
 char *expect_ident(){
     if(token->kind != TK_IDENT)
-        error_at(token->str,"expected an identifier");
+        error_tok(token,"expected an identifier");
     char *s = strndup(token->str,token->len);
     token = token->next;
     return s;
