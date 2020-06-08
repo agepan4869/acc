@@ -5,11 +5,17 @@ static char *argreg[] = {"rdi","rsi","rdx","rcx","r8","r9"};
 static int labelseq = 1;
 static char *funcname;
 
+static void gen(Node *node);
+
 static void gen_addr(Node *node){
-    if(node->kind == ND_VAR){
-        printf("    lea     rax,[rbp-%d]\n",node->var->offset);
-        printf("    push    rax\n");
-        return;
+    switch(node->kind){
+        case ND_VAR:
+            printf("    lea     rax,[rbp-%d]\n",node->var->offset);
+            printf("    push    rax\n");
+            return;
+        case ND_DEREF:
+            gen(node->lhs);
+            return;
     }
     error_tok(node->tok, "not an lvalue");
 }
@@ -27,7 +33,7 @@ static void store(){
     printf("    push    rdi\n");
 }
 
-void gen(Node *node){
+static void gen(Node *node){
     switch(node->kind){
         case ND_NUM:
             printf("    push    %ld\n",node->val);
@@ -44,6 +50,13 @@ void gen(Node *node){
             gen_addr(node->lhs);
             gen(node->rhs);
             store();
+            return;
+        case ND_ADDR:
+            gen_addr(node->lhs);
+            return;
+        case ND_DEREF:
+            gen(node->lhs);
+            load();
             return;
         case ND_IF:{
             int seq = labelseq++;

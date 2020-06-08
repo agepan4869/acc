@@ -94,5 +94,12 @@ assert 1 'main(){return sub2(4,3);}
 assert 55 'main() {return fib(9);}
             fib(x){
                 if(x<=1) return 1; return fib(x-1) + fib(x-2);}'
-                
+assert 3 'main() {x=3; return *&x;}'
+assert 3 'main() {x=3; y=&x; z=&y; return **z;}'
+assert 5 'main() {x=3; y=5; return *(&x+8);}'
+assert 3 'main() {x=3; y=5; return *(&y-8);}'
+assert 5 'main() {x=3; y=&x; *y=5; return x;}'
+assert 7 'main() {x=3; y=5; *(&x+8)=7; return y;}'
+assert 7 'main() {x=3; y=5; *(&y-8)=7; return x;}'
+
 echo OK

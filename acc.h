@@ -67,6 +67,8 @@ typedef enum{
     ND_LT,          // <,>
     ND_LE,          // <=,>=
     ND_ASSIGN,      // =
+    ND_ADDR,        // unary &
+    ND_DEREF,       // unary *
     ND_NUM,         // 整数
     ND_RETURN,      // return
     ND_IF,          // if
