@@ -382,6 +382,8 @@ static Node *func_args(){
 }
 
 static Node *primary(){
+    Token *tok;
+
     // 次のトークンが"("なら、"(" expr ")"のはず
     if(consume("(")){
         Node *node = expr();
@@ -389,7 +391,12 @@ static Node *primary(){
         return node;
     }
 
-    Token *tok;
+    if(tok = consume("sizeof")){
+        Node *node = unary();
+        add_type(node);
+        return new_num(node->ty->size, tok);
+    }
+    
     if(tok = consume_ident()){
         // Function call
         if(consume("(")){
